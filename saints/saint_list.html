@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Saint List</title>
+</head>
+<body>
+    <h1>Saints</h1>
+
+    <p><a href="{% url 'saint_add' %}">Add a new saint</a></p>
+
+    <ul>
+        {% for saint in object_list %}
+            <li>
+                <strong>{{ saint.name }}</strong><br>
+
+                {% with first_image=saint.images.first %}
+                    {% if first_image and first_image.image %}
+                        <img src="{{ first_image.image.url }}" alt="{{ saint.name }}" class="saint-image">
+                    {% else %}
+                        <img src="{% static 'saints/placeholder.png' %}" alt="No image" class="saint-image">
+                    {% endif %}
+                {% endwith %}
+
+            </li>
+        {% empty %}
+            <li>No saints available.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

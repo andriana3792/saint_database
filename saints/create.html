@@ -1,0 +1,696 @@
+templates/saints/create.html -->
+{% extends 'base.html' %}
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saint Form with Inline Images</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #212529;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #495057;
+            font-weight: 400;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #417690;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 400;
+            font-size: 14px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn:hover {
+            background-color: #205067;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .form-section-header {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .form-section-content {
+            padding: 20px;
+        }
+        
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            flex: 1;
+            min-width: 300px;
+            margin-right: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group:last-child {
+            margin-right: 0;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        input[type="text"], 
+        input[type="date"], 
+        select, 
+        textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .inline-formset {
+            margin-top: 20px;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .inline-formset-header {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 600;
+            color: #495057;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .inline-formset-content {
+            padding: 15px;
+        }
+        
+        .inline-form {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 15px;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .inline-form-group {
+            flex: 1;
+            min-width: 200px;
+            margin-right: 15px;
+            margin-bottom: 10px;
+        }
+        
+        .image-preview {
+            width: 100px;
+            height: 100px;
+            border: 1px dashed #ced4da;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            background-color: white;
+            overflow: hidden;
+        }
+        
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        
+        .form-actions {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            text-align: right;
+        }
+        
+        .help-text {
+            font-size: 12px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .delete-checkbox {
+            margin-top: 10px;
+        }
+        
+        .add-row {
+            margin-top: 15px;
+        }
+        
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            border: 1px solid transparent;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-color: #dee2e6 #dee2e6 transparent;
+            border-bottom: none;
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .thumbnail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .thumbnail {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            overflow: hidden;
+            text-align: center;
+            padding: 10px;
+        }
+        
+        .thumbnail img {
+            max-width: 100%;
+            height: 120px;
+            object-fit: cover;
+        }
+        
+        .thumbnail-caption {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 768px) {
+            .form-group {
+                min-width: 100%;
+                margin-right: 0;
+            }
+            
+            .inline-form-group {
+                min-width: 100%;
+                margin-right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Saint Management</h1>
+            <div>
+                <button class="btn" onclick="toggleView()">Toggle View</button>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <div class="tab active" data-tab="create">Create Saint</div>
+                <div class="tab" data-tab="preview">Preview Saint</div>
+            </div>
+            
+            <!-- Create Saint Form -->
+            <div class="tab-content active" id="create-tab">
+                <form id="saint-form">
+                    <div class="form-section">
+                        <div class="form-section-header">
+                            <span>Basic Information</span>
+                        </div>
+                        <div class="form-section-content">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="name">Name *</label>
+                                    <input type="text" id="name" name="name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Gender</label>
+                                    <select id="gender" name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Unknown">Unknown</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="type">Type of Saint</label>
+                                    <select id="type" name="type">
+                                        <option value="">Select Type</option>
+                                        <option value="Bishop">Bishop</option>
+                                        <option value="Monk-Ascetic">Monk-Ascetic</option>
+                                        <option value="Hermit-Recluse">Hermit-Recluse</option>
+                                        <option value="Martyr">Martyr</option>
+                                        <option value="Deacon">Deacon</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="act_period">Act Period</label>
+                                    <select id="act_period" name="act_period">
+                                        <option value="">Select Period</option>
+                                        <option value="1st">1st</option>
+                                        <option value="2nd">2nd</option>
+                                        <option value="3rd">3rd</option>
+                                        <option value="4th">4th</option>
+                                        <option value="5th">5th</option>
+                                        <option value="6th">6th</option>
+                                        <option value="7th">7th</option>
+                                        <option value="Unknown">Unknown</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="birth_region">Region of Birth</label>
+                                    <input type="text" id="birth_region" name="birth_region">
+                                </div>
+                                <div class="form-group">
+                                    <label for="burial_region">Region of Burial</label>
+                                    <input type="text" id="burial_region" name="burial_region">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="feast_day">Feast Day</label>
+                                    <input type="text" id="feast_day" name="feast_day" placeholder="MM-DD">
+                                    <div class="help-text">Format: MM-DD (e.g., 12-25 for December 25)</div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="secondary_feast">Secondary Feast Date</label>
+                                    <input type="text" id="secondary_feast" name="secondary_feast" placeholder="MM-DD">
+                                    <div class="help-text">Format: MM-DD (e.g., 01-19 for January 19)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="birth_date">Birth Date</label>
+                                    <input type="text" id="birth_date" name="birth_date">
+                                </div>
+                                <div class="form-group">
+                                    <label for="death_date">Death Date</label>
+                                    <input type="text" id="death_date" name="death_date">
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="description">Short Description</label>
+                                    <textarea id="description" name="description"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inline Images Section -->
+                    <div class="inline-formset">
+                        <div class="inline-formset-header">
+                            <span>Saint Images</span>
+                            <button type="button" class="btn" onclick="addImageForm()">Add Image</button>
+                        </div>
+                        <div class="inline-formset-content" id="image-forms">
+                            <!-- Image forms will be added here dynamically -->
+                            <div class="inline-form" id="image-form-1">
+                                <div class="image-preview">
+                                    <span>Preview</span>
+                                </div>
+                                <div class="inline-form-group">
+                                    <label>Image File</label>
+                                    <input type="file" accept="image/*">
+                                </div>
+                                <div class="inline-form-group">
+                                    <label>Material/Technique</label>
+                                    <select>
+                                        <option value="">Select</option>
+                                        <option value="Wall Painting">Wall Painting</option>
+                                        <option value="Icon">Icon</option>
+                                        <option value="Manuscript">Manuscript</option>
+                                        <option value="Sculpture">Sculpture</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="inline-form-group">
+                                    <label>Century</label>
+                                    <select>
+                                        <option value="">Select</option>
+                                        <option value="10th">10th</option>
+                                        <option value="11th">11th</option>
+                                        <option value="12th">12th</option>
+                                        <option value="13th">13th</option>
+                                        <option value="14th">14th</option>
+                                        <option value="15th">15th</option>
+                                        <option value="16th">16th</option>
+                                    </select>
+                                </div>
+                                <div class="inline-form-group">
+                                    <label>Description</label>
+                                    <textarea rows="3"></textarea>
+                                </div>
+                                <div class="inline-form-group">
+                                    <div class="delete-checkbox">
+                                        <label>
+                                            <input type="checkbox"> Delete
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn">Save Saint</button>
+                        <button type="button" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Preview Saint View -->
+            <div class="tab-content" id="preview-tab">
+                <div class="form-section">
+                    <div class="form-section-header">
+                        <span>Saint Preview: Saint Augustine</span>
+                    </div>
+                    <div class="form-section-content">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <p>Saint Augustine</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <p>Male</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Type of Saint</label>
+                                <p>Bishop</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Act Period</label>
+                                <p>4th-5th</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Region of Birth</label>
+                                <p>Tagaste, Numidia (modern-day Algeria)</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Region of Burial</label>
+                                <p>Pavia, Italy</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Feast Day</label>
+                                <p>08-28</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Secondary Feast Date</label>
+                                <p>None</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Birth Date</label>
+                                <p>November 13, 354</p>
+                            </div>
+                            <div class="form-group">
+                                <label>Death Date</label>
+                                <p>August 28, 430</p>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Short Description</label>
+                                <p>Augustine of Hippo was a theologian, philosopher, and the bishop of Hippo Regius in Numidia, Roman North Africa. His writings influenced the development of Western philosophy and Western Christianity, and he is viewed as one of the most important Church Fathers.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="inline-formset">
+                    <div class="inline-formset-header">
+                        <span>Saint Images</span>
+                    </div>
+                    <div class="inline-formset-content">
+                        <div class="thumbnail-grid">
+                            <div class="thumbnail">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGN0Y3RjciLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI3NSIgcj0iMjUiIGZpbGw9IiNDRENEQ0QiLz48cGF0aCBkPSJNMTMwIDE1MEg3MFYxMjVDNzAgMTA1LjU2IDg1LjU2IDkwIDEwMCA5MFMxMzAgMTA1LjU2IDEzMCAxMjVWMTUwWiIgZmlsbD0iI0NEQ0RDRCIvPjwvc3ZnPg==" alt="Saint Augustine">
+                                <div class="thumbnail-caption">Fresco, 15th century</div>
+                            </div>
+                            <div class="thumbnail">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNFRUVFRSIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSIzMCIgZmlsbD0iI0NEQ0RDRCIvPjxwYXRoIGQ9Ik0xNDAgMTcwSDYwVjEzMEM2MCAxMDEuNSA4MS41IDgwIDExMCA4MEg5MEMxMTguNSA4MCAxNDAgMTAxLjUgMTQwIDEzMFYxNzBaIiBmaWxsPSIjQ0RDRENEIi8+PC9zdmc+" alt="Saint Augustine">
+                                <div class="thumbnail-caption">Icon, 16th century</div>
+                            </div>
+                            <div class="thumbnail">
+                                <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCIgZmlsbD0ibm9uZSI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiNGQUZBRkEiLz48Y2lyY2xlIGN4PSIxMDAiIGN5PSI3MCIgcj0iMjUiIGZpbGw9IiNDRENEQ0QiLz48cGF0aCBkPSJNMTMwIDE2MEg3MFYxMjBDNzAgOTcuNSA5Ny41IDcwIDEyMCA3MEg4MEMxMDIuNSA3MCAxMzAgOTcuNSAxMzAgMTIwVjE2MFoiIGZpbGw9IiNDRENEQ0QiLz48L3N2Zz4=" alt="Saint Augustine">
+                                <div class="thumbnail-caption">Manuscript, 14th century</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn">Edit Saint</button>
+                    <button class="btn btn-secondary">Back to List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+            });
+        });
+        
+        // Toggle between create and preview views
+        function toggleView() {
+            const createTab = document.getElementById('create-tab');
+            const previewTab = document.getElementById('preview-tab');
+            
+            if (createTab.classList.contains('active')) {
+                createTab.classList.remove('active');
+                previewTab.classList.add('active');
+                
+                document.querySelector('[data-tab="create"]').classList.remove('active');
+                document.querySelector('[data-tab="preview"]').classList.add('active');
+            } else {
+                previewTab.classList.remove('active');
+                createTab.classList.add('active');
+                
+                document.querySelector('[data-tab="preview"]').classList.remove('active');
+                document.querySelector('[data-tab="create"]').classList.add('active');
+            }
+        }
+        
+        // Add new image form
+        let imageFormCount = 1;
+        function addImageForm() {
+            imageFormCount++;
+            const newForm = document.createElement('div');
+            newForm.className = 'inline-form';
+            newForm.id = `image-form-${imageFormCount}`;
+            newForm.innerHTML = `
+                <div class="image-preview">
+                    <span>Preview</span>
+                </div>
+                <div class="inline-form-group">
+                    <label>Image File</label>
+                    <input type="file" accept="image/*">
+                </div>
+                <div class="inline-form-group">
+                    <label>Material/Technique</label>
+                    <select>
+                        <option value="">Select</option>
+                        <option value="Wall Painting">Wall Painting</option>
+                        <option value="Icon">Icon</option>
+                        <option value="Manuscript">Manuscript</option>
+                        <option value="Sculpture">Sculpture</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="inline-form-group">
+                    <label>Century</label>
+                    <select>
+                        <option value="">Select</option>
+                        <option value="10th">10th</option>
+                        <option value="11th">11th</option>
+                        <option value="12th">12th</option>
+                        <option value="13th">13th</option>
+                        <option value="14th">14th</option>
+                        <option value="15th">15th</option>
+                        <option value="16th">16th</option>
+                    </select>
+                </div>
+                <div class="inline-form-group">
+                    <label>Description</label>
+                    <textarea rows="3"></textarea>
+                </div>
+                <div class="inline-form-group">
+                    <div class="delete-checkbox">
+                        <label>
+                            <input type="checkbox" onclick="removeImageForm(${imageFormCount})"> Delete
+                        </label>
+                    </div>
+                </div>
+            `;
+            document.getElementById('image-forms').appendChild(newForm);
+        }
+        
+        // Remove image form
+        function removeImageForm(id) {
+            const formToRemove = document.getElementById(`image-form-${id}`);
+            if (formToRemove) {
+                formToRemove.remove();
+            }
+        }
+        
+        // Form submission
+        document.getElementById('saint-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Saint information saved successfully!');
+        });
+        
+        // Image preview functionality
+        document.addEventListener('change', function(e) {
+            if (e.target.type === 'file' && e.target.accept.includes('image')) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        const preview = e.target.closest('.inline-form').querySelector('.image-preview');
+                        preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

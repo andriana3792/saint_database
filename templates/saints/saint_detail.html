@@ -1,0 +1,445 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ saint.name|default:"Unnamed Saint" }} - MapLoS Cy</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECrDRNs3Z0TxcgZfbwcv49zhbSzKhsOum7N7N2qG4VHL9zox/5hsnSy3HVkS77sC7+3RU1Q==" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #6b85b1);
+            color: rgb(212, 220, 243);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .footer-logos img {
+            height: 60px;
+            width: auto;
+        }
+        footer {
+            flex-shrink: 0;
+            background-color: #f8f9fa;
+            padding: 20px 0;
+            border-radius: 40px;
+        }
+        .footer-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .footer-button {
+            text-align: center;
+            flex: 1;
+        }
+        .footer-logos {
+            flex: 1;
+            text-align: right;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: nowrap;
+        }
+        .footer-text {
+            text-align: right;
+            margin-right: 0.5%;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: #0c0338;
+        }
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+            background: white;
+            border-radius: 40px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .detail-left {
+            text-align: center;
+        }
+        .detail-left img {
+            width: 100%;
+            max-width: 250px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1rem;
+        }
+        .detail-right {
+            position: relative;
+        }
+        .detail-right h1 {
+            font-weight: 700;
+            color: #6b85b1;
+            margin-bottom: 0.5rem;
+        }
+        .detail-right .info {
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-weight: 600;
+            color: #6b85b1;
+            margin-top: 1.5rem;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid #e0f0ff;
+            padding-bottom: 4px;
+        }
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .gallery img {
+            border-radius: 10px;
+            max-width: 200px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: rgb(223, 225, 234);
+            background: #6b85b1;
+            padding: 6px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+        .back-btn:hover {
+            background: #f5f6f7;
+            color: #6b85b1;
+        }
+        ul {
+            list-style-type: none;
+        }
+        #saint-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        @media (max-width: 768px) {
+            .detail-container {
+                grid-template-columns: 1fr;
+            }
+            .gallery img {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <h1>MapLoS Cy</h1>
+        <p class="lead">Details</p>
+    </div>
+
+    <a href="{% url 'saint-list' %}" class="back-btn"><i class="fas fa-arrow-left me-1"></i>Back to Saints</a>
+
+    <div class="detail-container">
+        <!-- Left Column: Image -->
+        <div class="detail-left">
+            {% with first_image=saint.images.first %}
+                {% if first_image and first_image.image %}
+                    <img src="{{ first_image.image.url }}" alt="Portrait of {{ saint.name|default:'Saint' }}" loading="lazy">
+                {% else %}
+                    <img src="{% static 'saints/placeholder.png' %}" alt="No image available" loading="lazy">
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <!-- Right Column: Info -->
+        <div class="detail-right">
+            <h1>{{ saint.name|default:"Unnamed Saint" }}</h1>
+
+            <div class="info"><strong>Gender:</strong> {{ saint.gender|default:"Not specified" }}</div>
+            <div class="info"><strong>Type:</strong> {{ saint.type_of_saint|default:"Not specified" }}</div>
+            <div class="info"><strong>Active period:</strong>
+                {% if saint.act_period_1 %}{{ saint.act_period_1 }}{% endif %}
+                {% if saint.act_period_2 %}, {{ saint.act_period_2 }}{% endif %}
+                {% if saint.act_period_text %} ({{ saint.act_period_text }}){% endif %}
+                {% if not saint.act_period_1 and not saint.act_period_2 and not saint.act_period_text %}Not specified{% endif %}
+            </div>
+            <div class="info"><strong>Region of Birth:</strong> {{ saint.region_of_birth|default:"Not specified" }}</div>
+            <div class="info"><strong>Region of Burial:</strong> {{ saint.region_of_burial|default:"Not specified" }}</div>
+            {% if saint.feast_day %}
+                <div class="info"><strong>Feast Day:</strong> {{ saint.feast_day }}</div>
+            {% endif %}
+
+            <!-- Locations Map -->
+            <div class="section-title">Locations Map - Cyprus</div>
+            <div id="saint-map"></div>
+
+            <!-- Hagiographies -->
+            <div class="section-title">Hagiographies / Written Sources</div>
+            <ul>
+                {% for h in saint.hagiographies.all %}
+                    <li>
+                        <strong>Literary:</strong> {{ h.title_literary_text|default:"Not specified" }} <br>
+                        <strong>Century:</strong> {{ h.date_or_century_of_source|default:"Not specified" }} <br>
+                        <strong>Type:</strong> {{ h.literary_source_type|default:"Not specified" }}<br><br>
+                        <strong>Liturgical:</strong> {{ h.title_liturgical_text|default:"Not specified" }}<br>
+                        <strong>Century:</strong> {{ h.date_or_century_of_liturgical_source|default:"Not specified" }} <br>
+                        <strong>Type:</strong> {{ h.liturgical_texts_source_type|default:"Not specified" }}
+                    </li>
+                {% empty %}
+                    <li>No hagiographies available.</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Aspects of Cult -->
+            <div class="section-title">Aspects of Cult</div>
+            <ul>
+                {% for aspect in saint.cult_aspects.all %}
+                    <li>
+                        <strong>Place:</strong> {{ aspect.cult_place|default:"Not specified" }}<br>
+                        <strong>Pilgrimage Site:</strong> {{ aspect.pilgrimage_site|default:"Not specified" }}<br>
+                        <strong>Status:</strong> {{ aspect.status|default:"Not specified" }}<br>
+                        <strong>Activities:</strong> {{ aspect.activities_accompanying_cult|default:"Not specified" }}<br>
+                        <strong>Relics / Objects:</strong> {{ aspect.relics_cult_related_objects|default:"Not specified" }}<br>
+                        <strong>Miracles:</strong> {{ aspect.miracles|default:"Not specified" }}
+                    </li>
+                {% empty %}
+                    <li>No cult aspects recorded.</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Archaeological Evidence -->
+            <div class="section-title">Archaeological / Architectural Evidence</div>
+            <ul>
+                {% for evidence in saint.archaeological_evidence.all %}
+                    <li>
+                        <strong>Type:</strong> {{ evidence.get_cult_buildings_display|default:"Not specified" }}<br>
+                        <strong>Location:</strong> {{ evidence.location|default:"Not specified" }}<br>
+                        <strong>Period:</strong> {{ evidence.date_1|default:"" }}{% if evidence.date_2 %} - {{ evidence.date_2 }}{% endif %}{% if evidence.date_text %} ({{ evidence.date_text }}){% endif %}{% if not evidence.date_1 and not evidence.date_2 and not evidence.date_text %}Not specified{% endif %}<br>
+                        <strong>Condition:</strong> {{ evidence.current_condition|default:"Not specified" }}
+                    </li>
+                {% empty %}
+                    <li>No archaeological evidence available.</li>
+                {% endfor %}
+            </ul>
+
+            <!-- Images Gallery -->
+            <div class="section-title">Images</div>
+            <div class="gallery row">
+                {% for image in saint.images.all %}
+                    <div class="col-md-5 mb-3">
+                        <div class="card h-100">
+                            {% if image.image %}
+                                <img src="{{ image.image.url }}" class="card-img-top" alt="{{ image.description|default:'Image of saint' }}" loading="lazy">
+                            {% else %}
+                                <img src="{% static 'saints/placeholder.png' %}" class="card-img-top" alt="No image available" loading="lazy">
+                            {% endif %}
+                            <div class="card-body">
+                                <p><strong>Material/Technique:</strong> {{ image.get_material_technique_display|default:"Not specified" }}</p>
+                                <p><strong>Site/Monument:</strong> {{ image.site_monument|default:"Not specified" }}</p>
+                                <p><strong>Century:</strong> {{ image.century|default:"Not specified" }}</p>
+                                <p><strong>Portrait Location:</strong> {{ image.location_of_portrait|default:"Not specified" }}{% if image.location_of_portrait_text %} - {{ image.location_of_portrait_text }}{% endif %}</p>
+                                {% if image.has_inscription %}
+                                    <p><strong>Inscription:</strong> {{ image.inscription_text|default:"Not specified" }}</p>
+                                {% endif %}
+                                {% if image.description %}
+                                    <p><strong>Description:</strong> {{ image.description }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>No images available.</p>
+                {% endfor %}
+            </div>
+
+            <!-- Bibliography -->
+            <div class="section-title">Bibliography</div>
+            <ul>
+                {% for ref in saint.bibliographies.all %}
+                    <li>{{ ref.reference|default:"Not specified" }}</li>
+                {% empty %}
+                    <li>No bibliography available.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Check if any coordinates are available
+            {% if saint.region_of_birth_latitude and saint.region_of_birth_longitude or saint.region_of_burial_latitude and saint.region_of_burial_longitude or saint.cult_aspects.all or saint.archaeological_evidence.all or saint.images.all %}
+                // Initialize map centered on Cyprus (Nicosia: 35.1264, 33.4299)
+                var map = L.map('saint-map').setView([35.1264, 33.4299], 9);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                // Define Cyprus bounds to restrict panning
+                var cyprusBounds = L.latLngBounds(
+                    [34.5, 32.0], // Southwest
+                    [35.7, 34.6]  // Northeast
+                );
+                map.setMaxBounds(cyprusBounds);
+                map.on('dragend', function() {
+                    if (!map.getBounds().isValid() || !cyprusBounds.contains(map.getCenter())) {
+                        map.panTo([35.1264, 33.4299]);
+                    }
+                });
+
+                // Custom icons for different location types
+                var birthIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-baby" style="color: #ff0000; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+                var burialIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-cross" style="color: #0000ff; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+                var cultIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-church" style="color: #008000; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+                var relicIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-gem" style="color: #800080; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+                var archaeologicalIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-archway" style="color: #ffa500; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+                var imageIcon = L.divIcon({
+                    className: 'custom-icon',
+                    html: '<i class="fas fa-image" style="color: #ff69b4; font-size: 24px;"></i>',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 30],
+                    popupAnchor: [0, -30]
+                });
+
+                var markers = [];
+
+                // Add birth location
+                {% if saint.region_of_birth_latitude and saint.region_of_birth_longitude %}
+                    var birthMarker = L.marker([{{ saint.region_of_birth_latitude }}, {{ saint.region_of_birth_longitude }}], { icon: birthIcon })
+                        .bindPopup("Birthplace: {{ saint.region_of_birth|escapejs|default:'Unknown' }}")
+                        .addTo(map);
+                    markers.push(birthMarker);
+                {% endif %}
+
+                // Add burial location
+                {% if saint.region_of_burial_latitude and saint.region_of_burial_longitude %}
+                    var burialMarker = L.marker([{{ saint.region_of_burial_latitude }}, {{ saint.region_of_burial_longitude }}], { icon: burialIcon })
+                        .bindPopup("Burial: {{ saint.region_of_burial|escapejs|default:'Unknown' }}")
+                        .addTo(map);
+                    markers.push(burialMarker);
+                {% endif %}
+
+                // Add cult places
+                {% for aspect in saint.cult_aspects.all %}
+                    {% if aspect.cult_place_latitude and aspect.cult_place_longitude %}
+                        var cultMarker = L.marker([{{ aspect.cult_place_latitude }}, {{ aspect.cult_place_longitude }}], { icon: cultIcon })
+                            .bindPopup("Cult Place: {{ aspect.cult_place|escapejs|default:'Unknown' }}")
+                            .addTo(map);
+                        markers.push(cultMarker);
+                    {% endif %}
+                    {% if aspect.relics_cult_related_objects_latitude and aspect.relics_cult_related_objects_longitude %}
+                        var relicMarker = L.marker([{{ aspect.relics_cult_related_objects_latitude }}, {{ aspect.relics_cult_related_objects_longitude }}], { icon: relicIcon })
+                            .bindPopup("Relic/Object: {{ aspect.relics_cult_related_objects|escapejs|default:'Unknown' }}")
+                            .addTo(map);
+                        markers.push(relicMarker);
+                    {% endif %}
+                {% endfor %}
+
+                // Add archaeological evidence locations
+                {% for evidence in saint.archaeological_evidence.all %}
+                    {% if evidence.cult_buildings_latitude and evidence.cult_buildings_longitude %}
+                        var archMarker = L.marker([{{ evidence.cult_buildings_latitude }}, {{ evidence.cult_buildings_longitude }}], { icon: archaeologicalIcon })
+                            .bindPopup("Archaeological Site: {{ evidence.location|escapejs|default:'Unknown' }} ({{ evidence.get_cult_buildings_display|escapejs|default:'Unknown' }})")
+                            .addTo(map);
+                        markers.push(archMarker);
+                    {% endif %}
+                {% endfor %}
+
+                // Add image monument locations
+                {% for image in saint.images.all %}
+                    {% if image.site_monument_latitude and image.site_monument_longitude %}
+                        var imageMarker = L.marker([{{ image.site_monument_latitude }}, {{ image.site_monument_longitude }}], { icon: imageIcon })
+                            .bindPopup("Image Site: {{ image.site_monument|escapejs|default:'Unknown' }} ({{ image.get_material_technique_display|escapejs|default:'Unknown' }})")
+                            .addTo(map);
+                        markers.push(imageMarker);
+                    {% endif %}
+                {% endfor %}
+
+                // Adjust map bounds to fit markers, but stay within Cyprus
+                if (markers.length > 0) {
+                    var group = new L.featureGroup(markers);
+                    var bounds = group.getBounds().pad(0.2);
+                    if (cyprusBounds.contains(bounds)) {
+                        map.fitBounds(bounds);
+                    } else {
+                        map.fitBounds(cyprusBounds);
+                    }
+                }
+            {% else %}
+                document.getElementById('saint-map').innerHTML = '<p style="text-align: center; padding: 20px;">No valid geographic data available for mapping.</p>';
+            {% endif %}
+        });
+    </script>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-row">
+            <div style="flex:1;"></div>
+            <div class="footer-button">
+                {% if user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="btn btn-outline-primary">
+                        <i class="fas fa-cog me-1"></i>Back to Admin
+                    </a>
+                {% endif %}
+            </div>
+             <div class="footer-logos">
+            <img src="/saint_images/thumbnail_MAPLOS CY_LOGO.jpg" alt="Logo">
+            <img src="/saint_images/EN Co-Funded by the EU_POS (1).png" alt="EU Co-Funded Logo">
+            <img src="/saint_images/CYPRUS REPUBLIC-EG (1).jpg" alt="Cyprus Republic Logo">
+            <img src="/saint_images/logoENpng5 (1).png" alt="Logo EN">
+        </div>
+    </div>
+        
+        <div class="footer-text">
+            MapLoS Cy - Mapping the Cult of Local Saints in Cyprus: Sites and Images (11th - 15th Century) (EXCELLENCE/0524/0433)
+        </div>
+    </footer>
+</body>
+</html>
