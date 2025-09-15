@@ -4,6 +4,8 @@ from .models import (
     Saint, HagiographyOrWrittenSource, AspectsOfCult,
     ArchaeologicalAndArchitecturalEvidence, Image, Bibliography
 )
+from django.shortcuts import render
+import json
 
 
 # --- Saint Views ---
@@ -70,3 +72,6 @@ class HagiographyDeleteView(DeleteView):
     model = HagiographyOrWrittenSource
     template_name = 'saints/hagiography_confirm_delete.html'
     success_url = reverse_lazy('hagiography-list')
+
+
+

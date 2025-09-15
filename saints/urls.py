@@ -1,7 +1,8 @@
 from django.urls import path
+from . import views
 from .views import (
     SaintListView, SaintDetailView, SaintCreateView,
-    SaintUpdateView, SaintDeleteView,
+    SaintUpdateView, SaintDeleteView, 
 )
 
 urlpatterns = [
@@ -10,5 +11,5 @@ urlpatterns = [
     path('saints/<int:pk>/', SaintDetailView.as_view(), name='saint-detail'),
     path('saints/create/', SaintCreateView.as_view(), name='saint-create'),
     path('saints/<int:pk>/update/', SaintUpdateView.as_view(), name='saint-update'),
-    path('saints/<int:pk>/delete/', SaintDeleteView.as_view(), name='saint-delete'),
+    path('saints/<int:pk>/delete/', SaintDeleteView.as_view(), name='saint-delete')
 ]
