@@ -1,0 +1,76 @@
+# ── Python / Django ─────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+
+
+# Virtualenvs & dotenv
+.env
+.env.*
+.envrc
+venv/
+env/
+__venv__/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Packaging
+.Python
+build/
+dist/
+eggs/
+.eggs/
+parts/
+sdist/
+var/
+
+# Tests & coverage
+htmlcov/
+coverage/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+
+# Django
+*.log
+logs/
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+*.pot
+/media/         # ← ignore uploaded images/files here
+
+# ── Node / React ──────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/build/
+.next/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── Editors & OS ───────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
+
+# ── Optional: Docker, Terraform ────────────────────────────────────────────
+docker-compose.yml
+# .docker/
+# *.tfstate
+# .terraform/
