@@ -26,27 +26,32 @@
             border-radius: 10px;
             background: #6b85b1;
             color: rgb(212, 220, 243);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
+
         .footer-logos img {
             height: 60px;
             width: auto;
         }
+
         footer {
             flex-shrink: 0;
             background-color: #f8f9fa;
             padding: 20px 0;
             border-radius: 40px;
         }
+
         .footer-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .footer-button {
             text-align: center;
             flex: 1;
         }
+
         .footer-logos {
             flex: 1;
             text-align: right;
@@ -55,6 +60,7 @@
             gap: 10px;
             flex-wrap: nowrap;
         }
+
         .footer-text {
             text-align: right;
             margin-right: 0.5%;
@@ -62,6 +68,7 @@
             font-size: 0.9rem;
             color: #0c0338;
         }
+
         .detail-container {
             display: grid;
             grid-template-columns: 1fr 2fr;
@@ -139,11 +146,13 @@
                 {% if saint.act_period_1 %}{{ saint.act_period_1 }}{% endif %}
                 {% if saint.act_period_2 %}, {{ saint.act_period_2 }}{% endif %}
                 {% if saint.act_period_text %} ({{ saint.act_period_text }}){% endif %}
-                {% if not saint.act_period_1 and not saint.act_period_2 and not saint.act_period_text %}Not
-                specified{%endif %}
+                {% if not saint.act_period_1 and not saint.act_period_2 and not saint.act_period_text %}
+                Not specified
+                {% endif %}
             </div>
             <div><strong>Region of Birth:</strong> {{ saint.region_of_birth|default:"Not specified" }}</div>
             <div><strong>Region of Burial:</strong> {{ saint.region_of_burial|default:"Not specified" }}</div>
+
             {% if saint.feast_day %}
             <div><strong>Feast Day:</strong> {{ saint.feast_day }}</div>
             {% endif %}
@@ -193,10 +202,13 @@
                 <li>
                     <strong>Type:</strong> {{ evidence.get_cult_buildings_display|default:"Not specified" }}<br>
                     <strong>Location:</strong> {{ evidence.location|default:"Not specified" }}<br>
-                    <strong>Period:</strong> {{ evidence.date_1|default:"" }}{% if evidence.date_2 %} - {{
-                    evidence.date_2 }}{% endif %}{% if evidence.date_text %} ({{ evidence.date_text }}){% endif %}{% if
-                    not evidence.date_1 and not evidence.date_2 and not evidence.date_text %}Not specified{% endif
-                    %}<br>
+                    <strong>Period:</strong>
+                    {{ evidence.date_1|default:"" }}
+                    {% if evidence.date_2 %} - {{ evidence.date_2 }}{% endif %}
+                    {% if evidence.date_text %} ({{ evidence.date_text }}){% endif %}
+                    {% if not evidence.date_1 and not evidence.date_2 and not evidence.date_text %}
+                    Not specified
+                    {% endif %}<br>
                     <strong>Condition:</strong> {{ evidence.current_condition|default:"Not specified" }}
                 </li>
                 {% empty %}
@@ -205,49 +217,57 @@
             </ul>
 
             <!-- Images Gallery -->
-        <div class="section-title">Images</div>
-        <div class="gallery row">
-            {% for image in saint.images.all %}
-            <div class="col-md-5 mb-3">
-                <div class="card h-100">
-                    {% if image.image %}
-                    <img src="{{ image.image.url }}" class="card-img-top"
-                        alt="{{ image.description|default:'Image of saint' }}">
-                    {% else %}
-                    <img src="{% static 'saints/placeholder.png' %}" class="card-img-top" alt="No image available">
-                    {% endif %}
-                    <div class="card-body">
-                        {% if image.get_material_technique_display %}
-                        <p><strong>Material/Technique:</strong> {{ image.get_material_technique_display }}</p>
+            <div class="section-title">Images</div>
+            <!-- Images Gallery -->
+            <div class="gallery row">
+                {% for image in saint.images.all %}
+                <div class="col-md-5 mb-3">
+                    <div class="card h-100">
+                        {% if image.image %}
+                        <img src="{{ image.image.url }}" class="card-img-top"
+                            alt="{{ image.description|default:'Image of saint' }}">
+                        {% else %}
+                        <img src="{% static 'saints/placeholder.png' %}" class="card-img-top" alt="No image available">
                         {% endif %}
-                        {% if image.site_monument %}
-                        <p><strong>Site/Monument:</strong> {{ image.site_monument }}</p>
-                        {% endif %}
-                        {% if image.century %}
-                        <p><strong>Century:</strong> {{ image.century }}</p>
-                        {% endif %}
-                        {% if image.location_of_portrait %}
-                        <p><strong>Portrait Location:</strong> {{ image.location_of_portrait }}
-                            {% if image.location_of_portrait_text %} - {{ image.location_of_portrait_text }}{% endif %}
-                        </p>
-                        {% endif %}
-                        {% if image.has_inscription %}
-                        <p><strong>Inscription:</strong> {{ image.inscription_text|default:"Not specified" }}</p>
-                        {% endif %}
-                        {% if image.description %}
-                        <p><strong>Description:</strong> {{ image.description }}</p>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            {% empty %}
-            <p>No images available.</p>
-            {% endfor %}
-        </div>
 
-            </div>
-        </div>
+                        <div class="card-body">
+                            {% if image.get_material_technique_display %}
+                            <p><strong>Material/Technique:</strong> {{ image.get_material_technique_display }}</p>
+                            {% endif %}
 
+                            {% if image.site_monument %}
+                            <p><strong>Site/Monument:</strong> {{ image.site_monument }}</p>
+                            {% endif %}
+
+                            {% if image.century %}
+                            <p><strong>Century:</strong> {{ image.century }}</p>
+                            {% endif %}
+
+                            {% if image.location_of_portrait %}
+                            <p><strong>Portrait Location:</strong> {{ image.location_of_portrait }}
+                                {% if image.location_of_portrait_text %}
+                                - {{ image.location_of_portrait_text }}
+                                {% endif %}
+                            </p>
+                            {% endif %}
+
+                            {% if image.has_inscription %}
+                            <p><strong>Inscription:</strong> {{ image.inscription_text|default:"Not specified" }}</p>
+                            {% endif %}
+
+                            {% if image.description %}
+                            <p><strong>Description:</strong> {{ image.description }}</p>
+                            {% endif %}
+                        </div> <!-- end card-body -->
+                    </div> <!-- end card -->
+                </div> <!-- end column -->
+                {% empty %}
+                <p>No images available.</p>
+                {% endfor %}
+            </div> <!-- end gallery -->
+
+
+        </div>
     </div>
 
     <!-- Bibliography -->
@@ -259,15 +279,14 @@
         <li>No bibliography available.</li>
         {% endfor %}
     </ul>
-    </div>
-    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             var map = L.map('saint-map').setView([35.1264, 33.4299], 9);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-            var markers = {{ markers_json| safe}};
+            var markers = {{ markers_json| safe
+        }};
         markers.forEach(m => {
             L.marker([m.lat, m.lng]).bindPopup(m.label).addTo(map);
         });
@@ -291,10 +310,10 @@
                 {% endif %}
             </div>
             <div class="footer-logos">
-                <img src="/saint_images/thumbnail_MAPLOS CY_LOGO.jpg" alt="Logo">
-                <img src="/saint_images/EN Co-Funded by the EU_POS (1).png" alt="EU Co-Funded Logo">
-                <img src="/saint_images/CYPRUS REPUBLIC-EG (1).jpg" alt="Cyprus Republic Logo">
-                <img src="/saint_images/logoENpng5 (1).png" alt="Logo EN">
+                <img src="{% static 'thumbnail_MAPLOS_CY_LOGO.jpg' %}" alt="Logo">
+                <img src="{% static 'EN Co-Funded by the EU_POS (1).png' %}" alt="EU Co-Funded Logo">
+                <img src="{% static 'CYPRUS REPUBLIC-EG (1).jpg' %}" alt="Cyprus Republic Logo">
+                <img src="{% static 'logoENpng5 (1).png' %}" alt="Logo EN">
             </div>
         </div>
         <div class="footer-text">
@@ -302,6 +321,7 @@
             (EXCELLENCE/0524/0433)
         </div>
     </footer>
+
 </body>
 
 </html>
