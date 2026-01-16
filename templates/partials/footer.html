@@ -1,0 +1,27 @@
+{% load static %}
+
+<footer class="site-footer">
+    <div class="footer-row">
+        <div class="footer-spacer"></div>
+
+        <div class="footer-button">
+            {% if user.is_staff %}
+            <a href="/saints-dashboard/" class="btn btn-outline-primary">
+                <i class="fas fa-cog me-1"></i>Back to Admin
+            </a>
+            {% endif %}
+        </div>
+
+        <div class="footer-logos">
+            <img src="{% static 'thumbnail_MAPLOS_CY_LOGO.jpg' %}" alt="MapLoS Cy Logo">
+            <img src="{% static 'EN Co-Funded by the EU_POS (1).png' %}" alt="EU Co-Funded Logo">
+            <img src="{% static 'CYPRUS REPUBLIC-EG (1).jpg' %}" alt="Cyprus Republic Logo">
+            <img src="{% static 'logoENpng5 (1).png' %}" alt="Logo EN">
+        </div>
+    </div>
+
+    <div class="footer-text">
+        MapLoS Cy - Mapping the Cult of Local Saints in Cyprus: Sites and Images (11th - 15th Century)
+        (EXCELLENCE/0524/0433)
+    </div>
+</footer>

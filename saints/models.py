@@ -1,5 +1,4 @@
 from django.db import models
-from multiselectfield import MultiSelectField
 from django.db import models, transaction
 
 

@@ -3,53 +3,77 @@ import os
 import pymysql
 from dotenv import load_dotenv
 
-# Load .env file
+# ======================
+# Environment
+# ======================
+
 load_dotenv()
 
 # Use PyMySQL as MySQLdb
 pymysql.install_as_MySQLdb()
 
-# Paths
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+def split_csv_env(name: str) -> list[str]:
+    """Split comma-separated env vars safely."""
+    return [x.strip() for x in os.getenv(name, "").split(",") if x.strip()]
+
 
 # ======================
 # Core settings
 # ======================
 
 SECRET_KEY = os.getenv("SECRET_KEY")
+if not SECRET_KEY:
+    raise RuntimeError("SECRET_KEY is not set in the environment")
 
-# DEBUG from env (default False)
 DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "t")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
-# CSRF_TRUSTED_ORIGINS=https://maplos.cyi.ac.cy,https://www.maplos.cyi.ac.cy
-CSRF_TRUSTED_ORIGINS = (
-    os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",") if not DEBUG else []
-)
+# ======================
+# Hosts & CSRF
+# ======================
 
+if DEBUG:
+    # Local development
+    ALLOWED_HOSTS = [
+        "localhost",
+        "127.0.0.1",
+        "[::1]",
+    ]
+    CSRF_TRUSTED_ORIGINS = []
+else:
+    # Production
+    ALLOWED_HOSTS = split_csv_env("ALLOWED_HOSTS")
+    CSRF_TRUSTED_ORIGINS = split_csv_env("CSRF_TRUSTED_ORIGINS")
+
+
+# ======================
+# Media
+# ======================
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_ROOT = BASE_DIR / "media"
 
-# Security settings
+
+# ======================
+# Security
+# ======================
+
 if DEBUG:
-    # Development: don’t force HTTPS
-    CSRF_TRUSTED_ORIGINS = []
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
     SECURE_SSL_REDIRECT = False
 else:
-    # Production: lock things down
     SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    CSRF_COOKIE_HTTPONLY = True
-    CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
-
+    SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_AGE = 1800  # 30 minutes
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
     SESSION_SAVE_EVERY_REQUEST = True
-    SESSION_COOKIE_HTTPONLY = True
+
+    CSRF_COOKIE_SECURE = True
+    CSRF_COOKIE_HTTPONLY = True
 
     SECURE_SSL_REDIRECT = True
     SECURE_HSTS_SECONDS = 31536000  # 1 year
@@ -58,8 +82,9 @@ else:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
+
 # ======================
-# Apps & Middleware
+# Applications
 # ======================
 
 INSTALLED_APPS = [
@@ -73,6 +98,11 @@ INSTALLED_APPS = [
     "multiselectfield",
 ]
 
+
+# ======================
+# Middleware
+# ======================
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -83,13 +113,23 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+# ======================
+# URLs / WSGI
+# ======================
+
 ROOT_URLCONF = "saint_project.urls"
+WSGI_APPLICATION = "saint_project.wsgi.application"
+
+
+# ======================
+# Templates
+# ======================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        # Project-level templates folder: /templates
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates"],  # project-level templates
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -102,7 +142,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "saint_project.wsgi.application"
 
 # ======================
 # Database (MySQL)
@@ -123,39 +162,44 @@ DATABASES = {
     }
 }
 
+
 # ======================
 # Password validation
 # ======================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
     },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 
+# ======================
+# Internationalization
+# ======================
+
 LANGUAGE_CODE = "en-us"
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Nicosia"
 USE_I18N = True
 USE_TZ = True
+
 
 # ======================
 # Static files
 # ======================
 
 STATIC_URL = "/static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]  # for local dev
-STATIC_ROOT = BASE_DIR / "staticfiles"  # for collectstatic (production)
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Default primary key field
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / "static"]
+
+
+# ======================
+# Defaults
+# ======================
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
