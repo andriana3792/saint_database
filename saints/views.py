@@ -1,18 +1,19 @@
 import json
 from django.views.generic import ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.serializers.json import DjangoJSONEncoder
 
 from .models import Saint
 
 
-class SaintListView(ListView):
+class SaintListView(LoginRequiredMixin,ListView):
     model = Saint
     template_name = "saints/saint_list.html"
     context_object_name = "saints"
     paginate_by = 20
 
 
-class SaintDetailView(DetailView):
+class SaintDetailView(LoginRequiredMixin,DetailView):
     model = Saint
     template_name = "saints/saint_detail.html"
 

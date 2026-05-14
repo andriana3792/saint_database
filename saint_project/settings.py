@@ -194,6 +194,15 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+
+# ======================
+# Authentication
+# ======================
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "saint-list"
+LOGOUT_REDIRECT_URL = "login"
+
 if DEBUG:
     STATICFILES_DIRS = [BASE_DIR / "static"]
 
