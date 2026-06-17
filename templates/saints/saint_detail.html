@@ -50,8 +50,7 @@
 
         <!-- Map -->
         <div class="section-title">Locations Map - Cyprus</div>
-        <div id="saint-map"></div>
-
+<div id="saint-map" style="height: 400px; width: 100%;"></div>
         <!-- Hagiographies -->
         <div class="section-title">Hagiographies / Written Sources</div>
         <ul>
@@ -179,8 +178,7 @@
             attribution: '&copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        var markers = {{ markers_json| safe
-    }};
+        var markers = {{ markers_json| safe}};
 
     markers.forEach(function (m) {
         L.marker([m.lat, m.lng]).bindPopup(m.label).addTo(map);

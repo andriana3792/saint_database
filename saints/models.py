@@ -10,6 +10,7 @@ class Saint(models.Model):
         ("Hermit-Recluse", "Hermit-Recluse"),
         ("Martyr", "Martyr"),
         ("Deacon", "Deacon"),
+        ("Apostle", "Apostle"),
         ("Other", "Other"),
     ]
     ACT_PERIOD_CHOICES = [
@@ -62,6 +63,7 @@ class Saint(models.Model):
 
     def __str__(self):
         return self.name if self.name else "Unnamed Saint"
+
     def get_default_image(self):
         img = self.images.filter(is_default=True).first()
         if img:
@@ -110,8 +112,6 @@ class HagiographyOrWrittenSource(models.Model):
 
     def __str__(self):
         return f"{self.title_literary_text} ({self.saint.name if self.saint else 'Unknown Saint'})"
-
-
 
     class Meta:
         verbose_name = "Hagiography or Written Source"
